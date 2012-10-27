@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project name="attack" default="jar" basedir=".">
+	<property environment="env" />
+	<property name="java_home" value="${env.JAVA_HOME}" />
+	<property name="libdir" value="./lib" />
+
+	<path id="build.classpath">
+		<fileset dir="./lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- =================================================================== -->
+	<!-- init                                                                -->
+	<!-- =================================================================== -->
+	<target name="init">
+		<delete dir="build" />
+		<mkdir dir="build" />
+		<mkdir dir="build/classes" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Prepares the build directory                                        -->
+	<!-- =================================================================== -->
+	<target name="prepare" depends="init">
+		<mkdir dir="build" />
+		<mkdir dir="build/classes" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Compiles the source code                                            -->
+	<!-- =================================================================== -->
+	<target name="compile" depends="prepare">
+		<echo>${basedir}</echo>
+		<javac srcdir="src" destdir="build/classes" debug="true" fork="yes" nowarn="false" deprecation="on" optimize="on" includes="**" encoding="utf-8">
+			<classpath refid="build.classpath" />
+			<include name="**/*.java" />
+			<exclude name="**/test/**/*.java" />
+		</javac>
+		<unzip dest="build/classes">
+			<fileset dir="./lib">
+				<include name="*.jar" />
+			</fileset>
+		</unzip>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="./detect.jar">
+			<fileset dir="build/classes">
+				<include name="**/*.class" />
+				<exclude name="dsp/osp/**/test/**/**.class" />
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="cn.gucas.ml.recsys.attack.Main" />
+			</manifest>
+		</jar>
+	</target>
+</project>
